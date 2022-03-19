@@ -1,10 +1,21 @@
 <template>
   <div id="tooltip-container">
-    <slot></slot>
+    <span v-if="type == 'focus'" class="tooltip-content">
+      <slot ref="input"></slot>
+    </span>
 
-    <div v-if="show && type !== 'hoverSpan'" class="tooltip-message">
-      {{ message }}
-    </div>
+    <span
+      v-if="type == 'hover'"
+      class="tooltip-content"
+      @mouseover="show = true"
+      @mouseleave="show = false"
+    >
+      <slot></slot>
+    </span>
+
+    <span v-if="type == 'hoverSpan'" class="tooltip-content">
+      <slot></slot>
+    </span>
 
     <div
       v-if="type == 'hoverSpan'"
@@ -12,7 +23,10 @@
       @mouseover="show = true"
       @mouseleave="show = false"
     >
-      ?<span v-if="show" class="tooltip-message"> {{ message }} </span>
+      ?
+    </div>
+    <div v-if="show" class="tooltip-message" :class="position">
+      {{ message }}
     </div>
   </div>
 </template>
@@ -30,25 +44,41 @@ export default {
       default: '',
       enum: ['hover', 'hoverSpan', 'focus'],
     },
+    position: {
+      type: String,
+      default: 'top',
+    },
   },
   data() {
     return {
       show: false,
     }
   },
-
-  methods: {
-    showMessage: () => {
-      this.show = true
-    },
+  mounted: () => {
+    if (this.type === 'focus') {
+      // bind the show of the tooltip with the focus
+    }
   },
 }
 </script>
 
 <style scoped lang="scss">
 #tooltip-container {
+  @apply relative;
   .tooltip-message {
-    @apply w-auto h-auto border-2 rounded-lg bg-gray-400 border-gray-400 absolute;
+    @apply absolute max-w-max min-w-min border-2 rounded-lg bg-gray-400 border-gray-400;
+  }
+  .top {
+    @apply inset-x-0 -top-7 min-w-max;
+  }
+  .bottom {
+    @apply -bottom-7 right-0 min-w-max;
+  }
+  .left {
+    @apply inset-y-0 left-0;
+  }
+  .right {
+    @apply inset-y-0 right-0;
   }
   #info-tooltip {
     @apply inline-block cursor-help text-center w-7 h-7 rounded-full border-2 bg-blue-300 border-blue-300;
