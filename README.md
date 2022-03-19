@@ -1,5 +1,7 @@
 # Installation
 
+Lancement du serveur
+
 ```bash
 cd app
 npm install
